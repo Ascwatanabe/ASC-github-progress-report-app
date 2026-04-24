@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  loginId      String   @unique
+  passwordHash String
+  displayName  String
+  /// ADMIN | MEMBER
+  role         String   @default("MEMBER")
+  email        String?
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  reports      Report[]
+}
+
+model Site {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  floors    Floor[]
+  reports   Report[]
+}
+
+model Floor {
+  id      String   @id @default(cuid())
+  siteId  String
+  site    Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  name    String
+  reports Report[]
+
+  @@unique([siteId, name])
+}
+
+model Report {
+  id                 String   @id @default(cuid())
+  userId             String
+  user               User     @relation(fields: [userId], references: [id])
+  siteId             String
+  site               Site     @relation(fields: [siteId], references: [id])
+  floorId            String
+  floor              Floor    @relation(fields: [floorId], references: [id])
+  /// YYYY-MM-DD (Asia/Tokyo の営業日)
+  reportDate         String
+  workArea           String
+  workContent        String
+  tomorrowWork       String
+  nextJobWithin2Days Boolean
+  spareCapacity      Boolean
+  insight            String
+  hasProblem         Boolean
+  problemDetail      String?
+  aiFeedback         String?
+  createdAt          DateTime @default(now())
+
+  @@unique([userId, reportDate])
+  @@index([reportDate])
+  @@index([siteId, reportDate])
+}

@@ -4,24 +4,41 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build --turbopack",
+    "postinstall": "prisma generate",
+    "build": "prisma migrate deploy && next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:seed": "npx tsx prisma/seed.ts",
+    "db:migrate": "prisma migrate deploy"
+  },
+  "prisma": {
+    "seed": "npx tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@prisma/client": "5.22.0",
+    "bcryptjs": "^3.0.3",
+    "date-fns": "^4.1.0",
+    "jose": "^6.2.2",
+    "next": "15.5.15",
+    "nodemailer": "^8.0.6",
+    "openai": "^6.34.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.15"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "15.5.15",
-    "@eslint/eslintrc": "^3"
+    "prisma": "5.22.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
   }
 }
