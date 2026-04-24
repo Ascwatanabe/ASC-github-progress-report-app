@@ -1,0 +1,7 @@
+# ローカル秘密情報・DB をアップロードしない（ビルドは Vercel の Environment Variables を使用）
+.env
+.env.*
+!.env.example
+dev.db
+prisma/dev.db
+prisma/dev.db-journal
