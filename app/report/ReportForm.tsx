@@ -35,8 +35,12 @@ export function ReportForm({ sites, initial }: { sites: SiteOption[]; initial: I
         <div className="rounded-lg bg-red-50 text-red-700 text-sm px-3 py-2 border border-red-200">{state.error}</div>
       ) : null}
       {state?.success && state.aiHint ? (
-        <div className="rounded-lg bg-amber-50 text-amber-900 text-sm px-3 py-2 border border-amber-200">
-          <strong>AIからの提案:</strong> {state.aiHint}
+        <div className="rounded-lg bg-amber-50 text-amber-900 text-sm px-3 py-2 border border-amber-200 whitespace-pre-wrap">
+          <strong className="block mb-1">AIチェック（保存済み）:</strong>
+          <span className="text-amber-950">{state.aiHint}</span>
+          <p className="mt-2 text-xs text-amber-800/90">
+            日本語の適正と、同現場の設備担当が内容を追えるかの2点を確認しています。提案は参考用です。
+          </p>
         </div>
       ) : null}
       {state?.success && !state.aiHint ? (
@@ -91,7 +95,9 @@ export function ReportForm({ sites, initial }: { sites: SiteOption[]; initial: I
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1">作業内容（AIチェック）</label>
+        <label className="block text-xs font-semibold text-slate-600 mb-1">
+          作業内容（AIチェック: 日本語・同現場への伝わりやすさ）
+        </label>
         <textarea
           name="workContent"
           defaultValue={initial?.workContent ?? ""}
@@ -104,7 +110,9 @@ export function ReportForm({ sites, initial }: { sites: SiteOption[]; initial: I
       </div>
 
       <div>
-        <label className="block text-xs font-semibold text-slate-600 mb-1">明日の作業（AIチェック）</label>
+        <label className="block text-xs font-semibold text-slate-600 mb-1">
+          明日の作業（AIチェック: 日本語・同現場への伝わりやすさ）
+        </label>
         <textarea
           name="tomorrowWork"
           defaultValue={initial?.tomorrowWork ?? ""}

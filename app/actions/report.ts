@@ -52,6 +52,7 @@ export async function submitReport(_: ReportActionState, formData: FormData): Pr
 
   const floor = await prisma.floor.findFirst({
     where: { id: parsed.data.floorId, siteId: parsed.data.siteId },
+    include: { site: { select: { name: true } } },
   });
   if (!floor) return { error: "作業場所（階）が不正です" };
 
@@ -59,7 +60,15 @@ export async function submitReport(_: ReportActionState, formData: FormData): Pr
   let aiFeedback: string | null = null;
   let aiHint: string | null = null;
   try {
-    aiFeedback = await checkReportText(parsed.data.workContent, parsed.data.tomorrowWork);
+    aiFeedback = await checkReportText({
+      siteName: floor.site.name,
+      floorName: floor.name,
+      workArea: parsed.data.workArea,
+      workContent: parsed.data.workContent,
+      tomorrowWork: parsed.data.tomorrowWork,
+      insight: parsed.data.insight,
+      problemDetail: parsed.data.hasProblem ? parsed.data.problemDetail ?? null : null,
+    });
     if (aiFeedback) aiHint = aiFeedback;
   } catch {
     aiFeedback = null;
