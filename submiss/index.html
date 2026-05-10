@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="進捗報告ツールの図解（提出用ページ）" />
+    <title>進捗報告ツール — 図解</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --text: #0f172a;
+        --muted: #475569;
+        --fine: #64748b;
+        --border: #cbd5e1;
+        --surface: #f8fafc;
+        --panel: #ffffff;
+        --accent: #5b21b6;
+        --accent-soft: #ede9fe;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family:
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          "Hiragino Sans",
+          "Hiragino Kaku Gothic ProN",
+          "Noto Sans JP",
+          sans-serif;
+        font-size: 15px;
+        line-height: 1.65;
+        color: var(--text);
+        background: var(--surface);
+      }
+      .wrap {
+        max-width: 880px;
+        margin: 0 auto;
+        padding: 32px 20px 64px;
+      }
+      header {
+        border-bottom: 2px solid var(--accent-soft);
+        padding-bottom: 16px;
+        margin-bottom: 32px;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 1.65rem;
+        font-weight: 700;
+      }
+      .lead {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.92rem;
+      }
+      section {
+        margin-bottom: 40px;
+      }
+      h2 {
+        margin: 0 0 12px;
+        font-size: 1.18rem;
+        font-weight: 700;
+        color: var(--text);
+      }
+      h3 {
+        margin: 20px 0 8px;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+      figure.screen {
+        margin: 16px 0 0;
+        padding: 12px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      figure.screen img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+      }
+      .screen-placeholder {
+        margin: 0;
+        padding: 28px 16px;
+        text-align: center;
+        background: var(--accent-soft);
+        color: var(--muted);
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9rem;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      th,
+      td {
+        padding: 10px 12px;
+        border-bottom: 1px solid var(--border);
+        text-align: left;
+        vertical-align: top;
+      }
+      tr:last-child th,
+      tr:last-child td {
+        border-bottom: none;
+      }
+      th {
+        background: var(--accent-soft);
+        font-weight: 600;
+        width: 26%;
+      }
+      .flow {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0;
+        margin-top: 12px;
+        padding: 20px;
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+      }
+      .flow-step {
+        width: min(420px, 100%);
+        padding: 11px 14px;
+        text-align: center;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 0.88rem;
+        font-weight: 600;
+        background: var(--accent-soft);
+        color: #1e1b4b;
+      }
+      .flow-arr {
+        line-height: 1.8;
+        color: var(--fine);
+        font-size: 0.85rem;
+      }
+      .note {
+        margin-top: 10px;
+        font-size: 0.82rem;
+        color: var(--fine);
+      }
+      .ingenuity blockquote {
+        margin: 12px 0 0;
+        padding: 14px 16px;
+        border-left: 4px solid var(--accent);
+        background: var(--panel);
+        border-radius: 0 8px 8px 0;
+        border: 1px solid var(--border);
+      }
+      .ingenuity p {
+        margin: 10px 0 0;
+        color: var(--muted);
+      }
+      code {
+        font-size: 0.84em;
+        background: var(--accent-soft);
+        padding: 1px 5px;
+        border-radius: 4px;
+      }
+      ul.dense {
+        margin: 8px 0 0;
+        padding-left: 1.2em;
+        color: var(--muted);
+      }
+      ul.dense li {
+        margin: 4px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>進捗報告ツールの図解</h1>
+        <p class="lead">
+          Next.js 製の進捗報告アプリについて、画面の論理構成、認証、送信処理、外部連携、工夫した点をまとめた提出用ページです。
+        </p>
+      </header>
+
+      <main>
+        <section id="screenshot" aria-labelledby="h-screen">
+          <h2 id="h-screen">1. 報告ツールの画面キャプチャ</h2>
+          <p style="margin: 0; color: var(--muted); font-size: 0.9rem">
+            開発環境またはデプロイ先でログイン後、進捗報告フォーム（<code>/report</code>）を表示した状態で撮影してください。同フォルダにファイル名 <code
+              >report-screen.png</code
+            >
+            で保存すると、自動的にここに表示されます。
+          </p>
+          <figure class="screen">
+            <img
+              id="screen-img"
+              src="report-screen.png"
+              alt="進捗報告フォームのスクリーンショット"
+              width="840"
+              onerror="this.style.display='none';document.getElementById('placeholder').hidden=false"
+              loading="lazy"
+            />
+            <p id="placeholder" class="screen-placeholder" hidden>
+              画像 <code>report-screen.png</code> をこのページと同じフォルダ（<code>submiss</code>）に置いて再読み込みしてください。
+            </p>
+            <figcaption class="note">提出前に、この画像がブラウザに表示されていることを確認してください。</figcaption>
+          </figure>
+          <script>
+            (function () {
+              var img = document.getElementById("screen-img");
+              var ph = document.getElementById("placeholder");
+              if (img && ph && img.complete && img.naturalWidth === 0) {
+                img.style.display = "none";
+                ph.hidden = false;
+              }
+            })();
+          </script>
+        </section>
+
+        <section id="four-parts" aria-labelledby="h-parts">
+          <h2 id="h-parts">2. フォーム入力の論理構成（4つのパーツ）</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">ブロック</th>
+                <th scope="col">内容・ねらい</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th scope="row">1. 現場・場所</th>
+                <td>現場名・階（必須）と作業範囲（任意）。「どこで」を先に決め、階リストを現場と連動させることで入力ミスを減らす。</td>
+              </tr>
+              <tr>
+                <th scope="row">2. 作業・予定</th>
+                <td>当日の作業内容と明日の作業（ともに必須）。AIチェック対象となる旨を画面上で明示し、日本語・伝わりやすさを意識して記入してもらう。</td>
+              </tr>
+              <tr>
+                <th scope="row">3. 負荷・スケジュール感</th>
+                <td>「2日以内に次の仕事があるか」「余力があるか」をラジオで取得。人手・日程の調整に使えるフラットな情報にする。</td>
+              </tr>
+              <tr>
+                <th scope="row">4. 振り返り・リスク</th>
+                <td>気づき・コメントに加え、「問題あり／なし」をトグルとし、ある場合のみ詳細を入力。異常だけを取りこぼしにくくする。</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="roles" aria-labelledby="h-role">
+          <h2 id="h-role">3. ロールとアクセス制御（ミドルウェア）</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">ロール</th>
+                <th scope="col">主なパス</th>
+                <th scope="col">概要</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MEMBER</td>
+                <td><code>/report</code></td>
+                <td>
+                  JWT クッキー（セッション）がない場合はログインへリダイレクト。同一ユーザー・同一日は DB で upsert し、「何度も送信して上書き」できる。
+                </td>
+              </tr>
+              <tr>
+                <td>ADMIN</td>
+                <td><code>/admin</code> など</td>
+                <td>管理者のみ。<code>middleware.ts</code> でロール確認し、未ログインまたは非 ADMIN はログインへ返す。</td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="note">セキュリティ要件としては <code>JWT_SECRET</code> を十分な長さ（32 文字以上など）で設定する前提となる。</p>
+        </section>
+
+        <section id="flow" aria-labelledby="h-flow">
+          <h2 id="h-flow">4. 報告送信の処理フロー（概略）</h2>
+          <p style="margin: 0 0 8px; color: var(--muted); font-size: 0.9rem">
+            送信ボタン押下後、サーバー側の <code>submitReport</code>（Server Actions）から、おおむね次の順に処理される。
+          </p>
+          <div class="flow" aria-label="送信処理の順序">
+            <div class="flow-step">ブラウザ（進捗フォーム）</div>
+            <span class="flow-arr" aria-hidden="true">↓</span>
+            <div class="flow-step"><code>submitReport</code>（入力検証・Zod）</div>
+            <span class="flow-arr" aria-hidden="true">↓</span>
+            <div class="flow-step">AI で参考チェック（失敗時はスキップ可）</div>
+            <span class="flow-arr" aria-hidden="true">↓</span>
+            <div class="flow-step">Prisma で DB に upsert</div>
+            <span class="flow-arr" aria-hidden="true">↓</span>
+            <div class="flow-step">Teams（Incoming Webhook 等）へ Markdown 通知</div>
+          </div>
+          <p class="note">
+            Teams 側の HTTP ステータスや要約文言を画面へ返しており、「保存はできたが通知だけ失敗」といった状態も利用者から追いやすい。
+          </p>
+        </section>
+
+        <section id="external" aria-labelledby="h-ext">
+          <h2 id="h-ext">5. 外部連携・データ保存</h2>
+          <ul class="dense">
+            <li><strong>PostgreSQL（Prisma）</strong> — ユーザー、現場／階マスタ、日次報告データの保存。</li>
+            <li><strong>OpenAI / Anthropic（<code>lib/ai</code>）</strong> — 送信時に日本語と「同現場担当への伝わりやすさ」を短いフィードバックとして返す。</li>
+            <li><strong>Teams Webhook（<code>lib/teams</code>）</strong> — 現場名・進捗要約などを自動投稿し、ログの運用にも耐える体裁にしている。</li>
+          </ul>
+        </section>
+
+        <section class="ingenuity" id="ingenuity" aria-labelledby="h-i">
+          <h2 id="h-i">6. 工夫したポイント</h2>
+          <blockquote>
+            <p>
+              Teams との連携を実装する過程で、アプリから Webhook で送るだけでなく、運用として
+              <strong>Power Automate</strong> でフローを組む必要があり、テナントやコネクタの扱いなど設定に戸惑う箇所が多く、試行錯誤に想定以上の時間を要しました。
+            </p>
+            <p>
+              また、利用する機能やテナントの契約内容によっては <strong>ライセンスや利用権限</strong> が前提となり、学校・個人環境では制約に当たることがある点も、事前に把握しておくべき課題だと感じました。ドキュメントやサンプルフローを確認しながら段階的に切り分けることで、最終的には通知まで到達させることができました。
+            </p>
+          </blockquote>
+        </section>
+      </main>
+
+    </div>
+  </body>
+</html>

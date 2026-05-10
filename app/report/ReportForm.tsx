@@ -1,7 +1,20 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { submitReport, type ReportActionState } from "@/app/actions/report";
+
+function SubmitReportButton({ pending }: { pending: boolean }) {
+  return (
+    <button
+      type="submit"
+      disabled={pending}
+      aria-busy={pending}
+      className="rounded-xl bg-violet-600 text-white font-bold py-3 hover:bg-violet-700 transition disabled:opacity-60 disabled:cursor-not-allowed"
+    >
+      {pending ? "送信中…" : "報告を送信する"}
+    </button>
+  );
+}
 
 export type SiteOption = {
   id: string;
@@ -23,29 +36,69 @@ type Initial = {
 } | null;
 
 export function ReportForm({ sites, initial }: { sites: SiteOption[]; initial: Initial }) {
-  const [state, formAction] = useActionState(submitReport, {} as ReportActionState);
+  const [state, formAction, isPending] = useActionState(submitReport, {} as ReportActionState);
   const [siteId, setSiteId] = useState(initial?.siteId ?? sites[0]?.id ?? "");
   const [hasProblem, setHasProblem] = useState(initial?.hasProblem ?? false);
+  const bannerRef = useRef<HTMLDivElement>(null);
 
   const floors = useMemo(() => sites.find((s) => s.id === siteId)?.floors ?? [], [sites, siteId]);
 
+  useEffect(() => {
+    if (!state?.success && !state?.error) return;
+    requestAnimationFrame(() => {
+      bannerRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    });
+  }, [state?.success, state?.error]);
+
   return (
-    <form action={formAction} className="flex flex-col gap-4">
-      {state?.error ? (
-        <div className="rounded-lg bg-red-50 text-red-700 text-sm px-3 py-2 border border-red-200">{state.error}</div>
-      ) : null}
-      {state?.success && state.aiHint ? (
-        <div className="rounded-lg bg-amber-50 text-amber-900 text-sm px-3 py-2 border border-amber-200 whitespace-pre-wrap">
-          <strong className="block mb-1">AIチェック（保存済み）:</strong>
-          <span className="text-amber-950">{state.aiHint}</span>
-          <p className="mt-2 text-xs text-amber-800/90">
-            日本語の適正と、同現場の設備担当が内容を追えるかの2点を確認しています。提案は参考用です。
-          </p>
-        </div>
-      ) : null}
-      {state?.success && !state.aiHint ? (
-        <div className="rounded-lg bg-emerald-50 text-emerald-800 text-sm px-3 py-2 border border-emerald-200">
-          保存しました（{new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}）
+    <form action={formAction} className="flex flex-col gap-4" aria-busy={isPending}>
+      {state?.error || state?.success ? (
+        <div ref={bannerRef} className="flex flex-col gap-4 scroll-mt-24">
+          {state?.error ? (
+            <div className="rounded-lg bg-red-50 text-red-700 text-sm px-3 py-2 border border-red-200">{state.error}</div>
+          ) : null}
+          {state?.success ? (
+            <div
+              className="rounded-lg bg-emerald-50 text-emerald-900 text-sm px-3 py-3 border border-emerald-300 shadow-sm"
+              role="status"
+              aria-live="polite"
+            >
+              <p className="font-bold text-emerald-950">進捗報告の送信が完了しました。</p>
+              {state.siteName ? (
+                <p className="mt-1 text-emerald-800">
+                  {state.siteName}
+                  {state.reportDate ? ` ／ 報告日（JST）${state.reportDate}` : null}
+                </p>
+              ) : null}
+              <p className="mt-1 text-xs text-emerald-700/90">
+                送信時刻（JST）{new Date().toLocaleString("ja-JP", { timeZone: "Asia/Tokyo" })}
+              </p>
+              {state.teamsNotify ? (
+                <div
+                  className={`mt-3 pt-3 border-t space-y-1 text-xs leading-relaxed ${
+                    state.teamsNotify.ok
+                      ? "border-emerald-200 text-emerald-950"
+                      : "border-amber-300 text-amber-950 bg-amber-50/80 rounded-md px-2 py-2 -mx-1"
+                  }`}
+                >
+                  <p className="font-bold">Teams への通知</p>
+                  <p>{state.teamsNotify.summary}</p>
+                  {state.teamsNotify.httpStatus != null ? (
+                    <p className="font-mono text-emerald-800/90">HTTP {state.teamsNotify.httpStatus}</p>
+                  ) : null}
+                </div>
+              ) : null}
+            </div>
+          ) : null}
+          {state?.success && state.aiHint ? (
+            <div className="rounded-lg bg-amber-50 text-amber-900 text-sm px-3 py-2 border border-amber-200 whitespace-pre-wrap">
+              <strong className="block mb-1">AIチェック（参考）:</strong>
+              <span className="text-amber-950">{state.aiHint}</span>
+              <p className="mt-2 text-xs text-amber-800/90">
+                日本語の適正と、同現場の設備担当が内容を追えるかの2点を確認しています。提案は参考用です。
+              </p>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
@@ -198,9 +251,21 @@ export function ReportForm({ sites, initial }: { sites: SiteOption[]; initial: I
         </div>
       ) : null}
 
-      <button type="submit" className="rounded-xl bg-violet-600 text-white font-bold py-3 hover:bg-violet-700 transition">
-        報告を送信する
-      </button>
+      <SubmitReportButton pending={isPending} />
+      {state?.success ? (
+        <p className="text-center text-sm font-semibold text-emerald-800 -mt-2" role="status">
+          {state.teamsNotify
+            ? state.teamsNotify.ok
+              ? "送信完了。Teams の通知結果はページ上部に表示しています。"
+              : "送信は完了しましたが、Teams 通知に問題があります。ページ上部を確認してください。"
+            : "送信が完了しました（詳細はページ上部の緑の欄）"}
+        </p>
+      ) : null}
+      {state?.error ? (
+        <p className="text-center text-sm font-semibold text-red-700 -mt-2" role="alert">
+          送信できませんでした。ページ上部のメッセージを確認してください。
+        </p>
+      ) : null}
     </form>
   );
 }

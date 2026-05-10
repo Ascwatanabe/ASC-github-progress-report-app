@@ -37,6 +37,7 @@
     "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "15.5.15",
+    "playwright": "^1.59.1",
     "prisma": "5.22.0",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
